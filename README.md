@@ -35,23 +35,25 @@ Para garantir uma arquitetura escalável e alinhada às exigências do mercado, 
 
 Certifique-se de possuir o **Node.js** e o **.NET 8 SDK** instalados.
 
-Inicializando a API (Back-end)
+## Inicializando a API (Back-end)
 
 1. Navegue até o diretório do servidor:
 cd CashFlow.Api
 
 2. Execute a aplicação:
 dotnet run
+
 O servidor estará operacional e o banco SQLite será gerado automaticamente.
 
-3. Inicializando a Interface (Front-end)
-Em um novo terminal, acesse o diretório do cliente:
+## Inicializando a Interface (Front-end)
+
+1. Em um novo terminal, acesse o diretório do cliente:
 cd CashFlow.Web
 
-4. Instale as dependências:
+2. Instale as dependências:
 npm install
 
-5. Inicie o servidor de desenvolvimento:
+3. Inicie o servidor de desenvolvimento:
 npm run dev
 
 Acesse o endereço local disponibilizado no terminal (geralmente http://localhost:5173).
