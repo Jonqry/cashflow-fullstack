@@ -294,3 +294,4 @@ C:\Users\joaov\Desktop\cashflow-project\CashFLow.APi\obj\Debug\net10.0\refint\Ca
 C:\Users\joaov\Desktop\cashflow-project\CashFLow.APi\obj\Debug\net10.0\CashFlow.Api.pdb
 C:\Users\joaov\Desktop\cashflow-project\CashFLow.APi\obj\Debug\net10.0\CashFlow.Api.genruntimeconfig.cache
 C:\Users\joaov\Desktop\cashflow-project\CashFLow.APi\obj\Debug\net10.0\ref\CashFlow.Api.dll
+C:\Users\joaov\Desktop\cashflow-project\CashFLow.Api\obj\Debug\net10.0\CashFlow.Api.sourcelink.json

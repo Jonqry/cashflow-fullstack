@@ -24,7 +24,7 @@ namespace CashFlow.Api.Services
                 throw new Exception("A pessoa informada não existe.");
             }
 
-            // REGRA DE NEGÓCIO: Validação da idade
+            // Validação da idade
             if (pessoa.Idade < 18 && transacao.Tipo == "Receita")
             {
                 throw new Exception("Regra violada: Menores de 18 anos apenas podem registrar despesas.");

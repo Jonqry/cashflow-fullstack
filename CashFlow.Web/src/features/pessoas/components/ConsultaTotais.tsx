@@ -4,7 +4,8 @@ import type { PessoaTotal } from '../types';
 import { toast } from 'react-toastify';
 
 interface ConsultaTotaisProps {
-  refreshKey: number; // Quando este número mudar, o useEffect recarrega os dados
+  refreshKey: number;
+  onActionSuccess: () => void; // Callback para propagar atualizações de estado
 }
 
 interface DadosGerais {
@@ -14,62 +15,90 @@ interface DadosGerais {
   saldoLiquidoGeral: number;
 }
 
-export function ConsultaTotais({ refreshKey }: ConsultaTotaisProps) {
+export function ConsultaTotais({ refreshKey, onActionSuccess }: ConsultaTotaisProps) {
   const [dados, setDados] = useState<DadosGerais | null>(null);
 
+  // Efeito colateral responsável por sincronizar a listagem de totais com o servidor
   useEffect(() => {
     const buscarTotais = async () => {
       try {
         const response = await api.get('/pessoas/totais');
         setDados(response.data);
       } catch (error) {
-        toast.error('Erro ao buscar a tabela de totais.');
+        toast.error('Erro ao processar a tabela de dados.');
       }
     };
     buscarTotais();
   }, [refreshKey]);
 
-  if (!dados) return <p>Carregando tabela...</p>;
+  // Função responsável por solicitar a deleção do registro e acionar o cascade delete
+  const handleDelete = async (id: number, nome: string) => {
+    const confirmar = window.confirm(`Tem certeza que deseja excluir ${nome}? A ação removerá permanentemente as transações vinculadas.`);
+    
+    if (confirmar) {
+      try {
+        await api.delete(`/pessoas/${id}`);
+        toast.success(`${nome} removido(a) com sucesso.`);
+        onActionSuccess(); 
+      } catch (error) {
+        toast.error('Erro ao processar a exclusão no servidor.');
+      }
+    }
+  };
+
+  if (!dados) return <p style={{ color: '#555' }}>Processando dados...</p>;
 
   return (
-    <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '8px' }}>
-      <h3>Consulta de Totais</h3>
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '15px' }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f4f4f4', textAlign: 'left' }}>
-            <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>Nome</th>
-            <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>Receitas</th>
-            <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>Despesas</th>
-            <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>Saldo</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dados.pessoas.map((pessoa) => (
-            <tr key={pessoa.id}>
-              <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>{pessoa.nome}</td>
-              <td style={{ padding: '10px', borderBottom: '1px solid #eee', color: '#28a745' }}>
-                R$ {pessoa.totalReceitas.toFixed(2)}
-              </td>
-              <td style={{ padding: '10px', borderBottom: '1px solid #eee', color: '#dc3545' }}>
-                R$ {pessoa.totalDespesas.toFixed(2)}
-              </td>
-              <td style={{ padding: '10px', borderBottom: '1px solid #eee', fontWeight: 'bold', color: pessoa.saldo >= 0 ? '#28a745' : '#dc3545' }}>
-                R$ {pessoa.saldo.toFixed(2)}
-              </td>
+    <div style={{ backgroundColor: '#ffffff', padding: '24px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+      <h3 style={{ marginTop: 0, color: '#333' }}>Consulta de Totais</h3>
+      <div style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+          <thead>
+            <tr style={{ backgroundColor: '#f8f9fa', textAlign: 'left' }}>
+              <th style={{ padding: '12px', borderBottom: '2px solid #eee', color: '#555' }}>Nome do Responsável</th>
+              <th style={{ padding: '12px', borderBottom: '2px solid #eee', color: '#555' }}>Receitas</th>
+              <th style={{ padding: '12px', borderBottom: '2px solid #eee', color: '#555' }}>Despesas</th>
+              <th style={{ padding: '12px', borderBottom: '2px solid #eee', color: '#555' }}>Saldo Líquido</th>
+              <th style={{ padding: '12px', borderBottom: '2px solid #eee', color: '#555', textAlign: 'center' }}>Ações</th>
             </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          <tr style={{ backgroundColor: '#f8f9fa', fontWeight: 'bold' }}>
-            <td style={{ padding: '10px' }}>TOTAIS GERAIS</td>
-            <td style={{ padding: '10px', color: '#28a745' }}>R$ {dados.totalGeralReceitas.toFixed(2)}</td>
-            <td style={{ padding: '10px', color: '#dc3545' }}>R$ {dados.totalGeralDespesas.toFixed(2)}</td>
-            <td style={{ padding: '10px', color: dados.saldoLiquidoGeral >= 0 ? '#28a745' : '#dc3545' }}>
-              R$ {dados.saldoLiquidoGeral.toFixed(2)}
-            </td>
-          </tr>
-        </tfoot>
-      </table>
+          </thead>
+          <tbody>
+            {dados.pessoas.map((pessoa) => (
+              <tr key={pessoa.id} style={{ transition: 'background-color 0.2s' }}>
+                <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>{pessoa.nome}</td>
+                <td style={{ padding: '12px', borderBottom: '1px solid #eee', color: '#28a745', fontWeight: '500' }}>
+                  R$ {pessoa.totalReceitas.toFixed(2)}
+                </td>
+                <td style={{ padding: '12px', borderBottom: '1px solid #eee', color: '#dc3545', fontWeight: '500' }}>
+                  R$ {pessoa.totalDespesas.toFixed(2)}
+                </td>
+                <td style={{ padding: '12px', borderBottom: '1px solid #eee', fontWeight: 'bold', color: pessoa.saldo >= 0 ? '#28a745' : '#dc3545' }}>
+                  R$ {pessoa.saldo.toFixed(2)}
+                </td>
+                <td style={{ padding: '12px', borderBottom: '1px solid #eee', textAlign: 'center' }}>
+                  <button 
+                    onClick={() => handleDelete(pessoa.id, pessoa.nome)}
+                    style={{ padding: '6px 12px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '13px', fontWeight: 'bold' }}
+                  >
+                    Excluir
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr style={{ backgroundColor: '#f8f9fa' }}>
+              <td style={{ padding: '15px 12px', fontWeight: 'bold', color: '#333' }}>TOTAIS GERAIS</td>
+              <td style={{ padding: '15px 12px', color: '#28a745', fontWeight: 'bold' }}>R$ {dados.totalGeralReceitas.toFixed(2)}</td>
+              <td style={{ padding: '15px 12px', color: '#dc3545', fontWeight: 'bold' }}>R$ {dados.totalGeralDespesas.toFixed(2)}</td>
+              <td style={{ padding: '15px 12px', fontWeight: 'bold', fontSize: '16px', color: dados.saldoLiquidoGeral >= 0 ? '#28a745' : '#dc3545' }}>
+                R$ {dados.saldoLiquidoGeral.toFixed(2)}
+              </td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     </div>
   );
 }

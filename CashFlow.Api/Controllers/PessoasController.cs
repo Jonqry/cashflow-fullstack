@@ -16,6 +16,7 @@ namespace CashFlow.Api.Controllers
             _context = context;
         }
 
+        // Função responsável por cadastrar uma nova pessoa no banco de dados.
         [HttpPost]
         public async Task<IActionResult> CriarPessoa(Pessoa pessoa)
         {
@@ -24,10 +25,11 @@ namespace CashFlow.Api.Controllers
             return Ok(pessoa); // Retorna HTTP 200 com os dados salvos
         }
 
+        // Função que calcula e retorna os totais (Receitas, Despesas e Saldo) de cada pessoa e o total geral.
         [HttpGet("totais")]
         public async Task<IActionResult> ListarTotais()
         {
-            // Busca todas as pessoas, incluindo suas transações
+            // Busca todas as pessoas, incluindo suas transações para realizar o cálculo na memória
             var pessoas = await _context.Pessoas
                 .Include(p => p.Transacoes)
                 .Select(p => new {
@@ -48,6 +50,24 @@ namespace CashFlow.Api.Controllers
                 TotalGeralDespesas = totalDespesasGeral,
                 SaldoLiquidoGeral = totalReceitasGeral - totalDespesasGeral
             });
+        }
+        
+        // Função responsável por deletar a pessoa. 
+        // A exclusão das transações associadas ocorre automaticamente em cascata via Entity Framework.
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletarPessoa(int id)
+        {
+            var pessoa = await _context.Pessoas.FindAsync(id);
+            
+            if (pessoa == null)
+            {
+                return NotFound("Pessoa não encontrada.");
+            }
+
+            _context.Pessoas.Remove(pessoa);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { mensagem = "Pessoa e suas transações foram excluídas com sucesso." });
         }
     }
 }

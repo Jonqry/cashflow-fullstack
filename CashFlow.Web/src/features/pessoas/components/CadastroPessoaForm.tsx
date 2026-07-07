@@ -7,15 +7,15 @@ export function CadastroPessoaForm({ onSuccess }: { onSuccess: () => void }) {
   const [idade, setIdade] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Evita que a página recarregue ao enviar o form
+    e.preventDefault(); // Intercepta o envio padrão para evitar recarregamento da página
 
     if (!nome || !idade) {
-      toast.warn('Preencha todos os campos!');
+      toast.warn('Preencha todos os campos obrigatórios!');
       return;
     }
 
     try {
-      // Fazendo a chamada POST para a API
+      // Transmissão da carga de dados para a API
       await api.post('/pessoas', { 
         nome, 
         idade: parseInt(idade) 
@@ -23,49 +23,49 @@ export function CadastroPessoaForm({ onSuccess }: { onSuccess: () => void }) {
 
       toast.success('Pessoa cadastrada com sucesso!');
       
-      // Limpa os campos após o sucesso
+      // Reset do estado local do formulário
       setNome('');
       setIdade('');
 
-      // Avisa o App.tsx para recarregar a tabela
+      // Dispara o callback para atualização da interface externa
       onSuccess();
       
     } catch (error) {
       console.error(error);
-      toast.error('Erro ao conectar com a API. Verifique se o back-end está rodando.');
+      toast.error('Erro de conexão. Verifique o status do servidor back-end.');
     }
   };
 
   return (
-    <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '8px', flex: 1, minWidth: '300px' }}>
-      <h3>Nova Pessoa</h3>
+    <div style={{ backgroundColor: '#ffffff', padding: '24px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', flex: 1, minWidth: '300px' }}>
+      <h3 style={{ marginTop: 0, color: '#333' }}>Nova Pessoa</h3>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         
         <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Nome:</label>
+          <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', color: '#555' }}>Nome completo:</label>
           <input 
             type="text" 
             value={nome} 
             onChange={(e) => setNome(e.target.value)} 
             placeholder="Ex: João Victor"
-            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }}
+            style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #e0e0e0', boxSizing: 'border-box' }}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Idade:</label>
+          <label style={{ display: 'block', marginBottom: '6px', fontSize: '14px', color: '#555' }}>Idade:</label>
           <input 
             type="number" 
             value={idade} 
             onChange={(e) => setIdade(e.target.value)} 
             placeholder="Ex: 25"
-            style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }}
+            style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #e0e0e0', boxSizing: 'border-box' }}
           />
         </div>
 
         <button 
           type="submit" 
-          style={{ padding: '10px', backgroundColor: '#007BFF', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+          style={{ padding: '12px', backgroundColor: '#007BFF', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', marginTop: '5px' }}
         >
           Cadastrar Pessoa
         </button>

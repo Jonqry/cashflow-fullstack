@@ -2,48 +2,50 @@ import { useState } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Importando os 3 componentes da estrutura de Features
+// Importação dos componentes da estrutura de Features
 import { CadastroPessoaForm } from './features/pessoas/components/CadastroPessoaForm';
 import { CadastroTransacaoForm } from './features/transacoes/components/CadastroTransacaoForm';
 import { ConsultaTotais } from './features/pessoas/components/ConsultaTotais';
 
 export default function App() {
-  // Estado que funciona como um "gatilho" para a tabela recarregar
+  // Estado utilizado para forçar a re-renderização da tabela de consulta
   const [refreshKey, setRefreshKey] = useState(0);
 
+  // Callback propagado para os componentes filhos atualizarem a listagem após mutações
   const handleAtualizarDados = () => {
     setRefreshKey((oldKey) => oldKey + 1);
   };
 
   return (
-    <div style={{ padding: '40px', fontFamily: 'sans-serif', maxWidth: '1100px', margin: '0 auto' }}>
-      <h1 style={{ textAlign: 'center', color: '#2c3e50', marginBottom: '40px' }}>
-        Sistema de Controle de Gastos
-      </h1>
-      
-      {/* Container de notificações */}
-      <ToastContainer position="top-right" autoClose={4000} />
-
-      <main style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+    <div style={{ backgroundColor: '#f8f9fa', minHeight: '100vh', padding: '40px 20px', fontFamily: 'sans-serif' }}>
+      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+        <h1 style={{ textAlign: 'center', color: '#2c3e50', marginBottom: '40px', fontWeight: 'bold' }}>
+          Sistema de Controle de Gastos
+        </h1>
         
-        {/* Bloco Superior: Os dois formulários lado a lado */}
-        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-          {/* O flex: 1 faz com que eles dividam o espaço igualmente */}
-          <div style={{ flex: 1, minWidth: '300px' }}>
-            <CadastroPessoaForm onSuccess={handleAtualizarDados} />
+        {/* Container global de notificações */}
+        <ToastContainer position="top-right" autoClose={4000} />
+
+        <main style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+          
+          {/* Container superior: Formulários de entrada */}
+          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+            <div style={{ flex: 1, minWidth: '300px' }}>
+              <CadastroPessoaForm onSuccess={handleAtualizarDados} />
+            </div>
+            
+            <div style={{ flex: 1, minWidth: '300px' }}>
+              <CadastroTransacaoForm onSuccess={handleAtualizarDados} refreshKey={refreshKey} />
+            </div>
+          </div>
+
+          {/* Container inferior: Tabela de totais */}
+          <div style={{ width: '100%' }}>
+            <ConsultaTotais refreshKey={refreshKey} onActionSuccess={handleAtualizarDados} />
           </div>
           
-          <div style={{ flex: 1, minWidth: '300px' }}>
-            <CadastroTransacaoForm onSuccess={handleAtualizarDados} />
-          </div>
-        </div>
-
-        {/* Bloco Inferior: A tabela de totais ocupando toda a largura */}
-        <div style={{ width: '100%' }}>
-          <ConsultaTotais refreshKey={refreshKey} />
-        </div>
-        
-      </main>
+        </main>
+      </div>
     </div>
   );
 }

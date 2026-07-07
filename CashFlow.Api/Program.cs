@@ -4,13 +4,16 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Adiciona suporte a Controllers (rotas)
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+});
 
 // Configura o Banco de Dados (SQLite)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=cashflow.db"));
 
-// Registra o nosso serviço para poder ser usado nos Controllers
+// Registra o serviço para poder ser usado nos Controllers
 builder.Services.AddScoped<CashFlow.Api.Services.TransacaoService>();
 
 // Configura o CORS (Permite que o React na porta 5173 acesse a API na porta 5000/5001)
