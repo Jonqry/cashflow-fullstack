@@ -11,7 +11,7 @@ O objetivo central deste projeto foi construir uma aplicação corporativa robus
 Para garantir uma arquitetura escalável e alinhada às exigências do mercado, o projeto foi segmentado com clara separação de responsabilidades:
 
 **Back-end (`/CashFlow.Api`)**
-* **C# / .NET 8 (Minimal APIs):** Construção de uma API moderna, tipada e de alta performance.
+* **C# / .NET 10 (ASP.NET Core Web API):** Construção de uma API REST com Controllers, tipada e de alta performance.
 * **Entity Framework Core:** ORM para abstração, mapeamento de entidades e persistência de dados.
 * **SQLite:** Banco de dados relacional portátil, garantindo execução local imediata sem necessidade de infraestrutura pesada.
 
@@ -22,7 +22,7 @@ Para garantir uma arquitetura escalável e alinhada às exigências do mercado, 
 
 ---
 
-🧠 Decisões de Arquitetura
+## 🧠 Decisões de Arquitetura
 
 1. **Camada de Serviço e Regras de Negócio:** A restrição que impede menores de 18 anos de registrarem "Receitas" foi encapsulada rigidamente no `TransacaoService` do Back-end. A API recusa a transação enviando um `400 Bad Request`. O Front-end apenas intercepta a exceção e notifica o usuário, garantindo a integridade dos dados na origem.
 2. **Cascade Delete Nativo:** Utilizando os recursos relacionais do Entity Framework, a funcionalidade de exclusão de usuários engatilha automaticamente a remoção de todas as transações associadas, prevenindo dados órfãos.
@@ -31,31 +31,27 @@ Para garantir uma arquitetura escalável e alinhada às exigências do mercado, 
 
 ---
 
- ## 🚀 Como Executar o Projeto
+## 🚀 Como Executar o Projeto
 
-Certifique-se de possuir o **Node.js** e o **.NET 8 SDK** instalados.
+Certifique-se de possuir o **Node.js** e o **.NET 10 SDK** instalados.
 
-## Inicializando a API (Back-end)
+### Inicializando a API (Back-end)
 
-1. Navegue até o diretório do servidor:
+```bash
 cd CashFlow.Api
-
-2. Execute a aplicação:
 dotnet run
+```
 
 O servidor estará operacional e o banco SQLite será gerado automaticamente.
 
-## Inicializando a Interface (Front-end)
+### Inicializando a Interface (Front-end)
 
-1. Em um novo terminal, acesse o diretório do cliente:
+Em um novo terminal:
+
+```bash
 cd CashFlow.Web
-
-2. Instale as dependências:
 npm install
-
-3. Inicie o servidor de desenvolvimento:
 npm run dev
+```
 
 Acesse o endereço local disponibilizado no terminal (geralmente http://localhost:5173).
-
-⌨️ Desenvolvido por João Victor Varela dos Santos (Estudante de Sistemas para Internet)
