@@ -1,0 +1,16 @@
+# .NET
+bin/
+obj/
+.vs/
+
+# Banco SQLite local (gerado automaticamente ao rodar a API)
+*.db
+*.db-shm
+*.db-wal
+
+# Front-end
+node_modules/
+dist/
+
+# Segredos
+.env
