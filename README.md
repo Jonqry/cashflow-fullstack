@@ -1,52 +1,31 @@
-# 💰 CashFlow - Sistema de Gestão Financeira
+# CashFlow
 
-Bem-vindo ao repositório do **CashFlow**! Este é um sistema Full-Stack desenvolvido para facilitar o controle de finanças pessoais, permitindo o cadastro de usuários e o registro de suas respectivas despesas e receitas.
+Controle de gastos da casa. Cadastra as pessoas da família, registra receitas e despesas de cada uma e mostra o total por pessoa e o total geral.
 
-O objetivo central deste projeto foi construir uma aplicação corporativa robusta, onde o Back-end fosse rigoroso na proteção das regras de negócio, e o Front-end entregasse uma experiência fluida, reativa e de alto desempenho.
+## Tecnologias
 
----
+- **API:** C# com .NET 10 (ASP.NET Core), Entity Framework Core e SQLite
+- **Front-end:** React com TypeScript (Vite), Axios e React Toastify
 
-## 🛠️ Tecnologias Utilizadas
+## Decisões
 
-Para garantir uma arquitetura escalável e alinhada às exigências do mercado, o projeto foi segmentado com clara separação de responsabilidades:
+1. **A regra de negócio fica no back-end.** Menor de 18 anos não pode registrar receita. A regra está no `TransacaoService`: a API responde `400 Bad Request` e o front-end só mostra o aviso. Assim a regra vale mesmo para quem chamar a API direto.
+2. **Excluir uma pessoa apaga as transações dela.** Usei a exclusão em cascata do Entity Framework para não sobrar transação sem dono.
+3. **O front-end é organizado por assunto.** As pastas `pessoas` e `transacoes` guardam tudo de cada parte, em vez de separar por tipo de arquivo.
+4. **O banco é criado sozinho.** A API aplica as migrations ao iniciar, então basta rodar para testar.
 
-**Back-end (`/CashFlow.Api`)**
-* **C# / .NET 10 (ASP.NET Core Web API):** Construção de uma API REST com Controllers, tipada e de alta performance.
-* **Entity Framework Core:** ORM para abstração, mapeamento de entidades e persistência de dados.
-* **SQLite:** Banco de dados relacional portátil, garantindo execução local imediata sem necessidade de infraestrutura pesada.
+## Como rodar
 
-**Front-end (`/CashFlow.Web`)**
-* **React + TypeScript (via Vite):** Interface SPA (Single Page Application) com forte tipagem estática e componentização inteligente.
-* **Axios:** Cliente HTTP para comunicação padronizada com a API.
-* **React Toastify:** Notificações não obstrutivas para feedback visual das operações de rede.
+Precisa do Node.js e do .NET 10 SDK.
 
----
-
-## 🧠 Decisões de Arquitetura
-
-1. **Camada de Serviço e Regras de Negócio:** A restrição que impede menores de 18 anos de registrarem "Receitas" foi encapsulada rigidamente no `TransacaoService` do Back-end. A API recusa a transação enviando um `400 Bad Request`. O Front-end apenas intercepta a exceção e notifica o usuário, garantindo a integridade dos dados na origem.
-2. **Cascade Delete Nativo:** Utilizando os recursos relacionais do Entity Framework, a funcionalidade de exclusão de usuários engatilha automaticamente a remoção de todas as transações associadas, prevenindo dados órfãos.
-3. **Padrão de Features no Front-end:** O projeto web foi estruturado pelo princípio de domínios (`Pessoas` e `Transacoes`), evitando componentes monolíticos e facilitando a manutenibilidade a longo prazo.
-4. **Developer Experience (Auto-Migration):** A API está programada para executar as *migrations* pendentes e gerar o arquivo de banco de dados automaticamente na inicialização, oferecendo um ambiente *plug-and-play* para avaliação.
-
----
-
-## 🚀 Como Executar o Projeto
-
-Certifique-se de possuir o **Node.js** e o **.NET 10 SDK** instalados.
-
-### Inicializando a API (Back-end)
+API:
 
 ```bash
 cd CashFlow.Api
 dotnet run
 ```
 
-O servidor estará operacional e o banco SQLite será gerado automaticamente.
-
-### Inicializando a Interface (Front-end)
-
-Em um novo terminal:
+Front-end, em outro terminal:
 
 ```bash
 cd CashFlow.Web
@@ -54,4 +33,4 @@ npm install
 npm run dev
 ```
 
-Acesse o endereço local disponibilizado no terminal (geralmente http://localhost:5173).
+Depois abra o endereço que aparecer no terminal (normalmente http://localhost:5173).
