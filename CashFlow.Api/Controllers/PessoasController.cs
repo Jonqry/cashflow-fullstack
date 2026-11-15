@@ -1,5 +1,7 @@
+using CashFlow.Api.Dtos;
 using CashFlow.Api.Entities;
 using CashFlow.Api.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +9,7 @@ namespace CashFlow.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize] // exige token JWT válido
     public class PessoasController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -17,12 +20,19 @@ namespace CashFlow.Api.Controllers
         }
 
         // Função responsável por cadastrar uma nova pessoa no banco de dados.
+        // Recebe um DTO (e não a entidade) para o cliente não conseguir definir Id nem enviar Transacoes junto.
         [HttpPost]
-        public async Task<IActionResult> CriarPessoa(Pessoa pessoa)
+        public async Task<IActionResult> CriarPessoa(PessoaRequest request)
         {
+            var pessoa = new Pessoa
+            {
+                Nome = request.Nome.Trim(),
+                Idade = request.Idade
+            };
+
             _context.Pessoas.Add(pessoa);
             await _context.SaveChangesAsync();
-            return Ok(pessoa); // Retorna HTTP 200 com os dados salvos
+            return Ok(new PessoaResponse(pessoa.Id, pessoa.Nome, pessoa.Idade)); // Retorna HTTP 200 com os dados salvos
         }
 
         // Função que calcula e retorna os totais (Receitas, Despesas e Saldo) de cada pessoa e o total geral.
@@ -35,10 +45,10 @@ namespace CashFlow.Api.Controllers
                 .Select(p => new {
                     p.Id,
                     p.Nome,
-                    TotalReceitas = p.Transacoes.Where(t => t.Tipo == "Receita").Sum(t => t.Valor),
-                    TotalDespesas = p.Transacoes.Where(t => t.Tipo == "Despesa").Sum(t => t.Valor),
-                    Saldo = p.Transacoes.Where(t => t.Tipo == "Receita").Sum(t => t.Valor) - 
-                            p.Transacoes.Where(t => t.Tipo == "Despesa").Sum(t => t.Valor)
+                    TotalReceitas = p.Transacoes.Where(t => t.Tipo == TiposTransacao.Receita).Sum(t => t.Valor),
+                    TotalDespesas = p.Transacoes.Where(t => t.Tipo == TiposTransacao.Despesa).Sum(t => t.Valor),
+                    Saldo = p.Transacoes.Where(t => t.Tipo == TiposTransacao.Receita).Sum(t => t.Valor) -
+                            p.Transacoes.Where(t => t.Tipo == TiposTransacao.Despesa).Sum(t => t.Valor)
                 }).ToListAsync();
 
             var totalReceitasGeral = pessoas.Sum(p => p.TotalReceitas);
@@ -51,17 +61,17 @@ namespace CashFlow.Api.Controllers
                 SaldoLiquidoGeral = totalReceitasGeral - totalDespesasGeral
             });
         }
-        
-        // Função responsável por deletar a pessoa. 
+
+        // Função responsável por deletar a pessoa.
         // A exclusão das transações associadas ocorre automaticamente em cascata via Entity Framework.
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeletarPessoa(int id)
         {
             var pessoa = await _context.Pessoas.FindAsync(id);
-            
+
             if (pessoa == null)
             {
-                return NotFound("Pessoa não encontrada.");
+                return Problem(statusCode: StatusCodes.Status404NotFound, title: "Pessoa não encontrada.");
             }
 
             _context.Pessoas.Remove(pessoa);

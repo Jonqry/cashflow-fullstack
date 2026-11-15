@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../../../infra/api';
 import { toast } from 'react-toastify';
 import type { Pessoa } from '../../pessoas/types';
+import { mensagemDeErro } from '../../../infra/erros';
 
 interface CadastroTransacaoProps {
   onSuccess: () => void; // Callback para notificar atualizações ao componente pai
@@ -52,10 +53,9 @@ export function CadastroTransacaoForm({ onSuccess, refreshKey }: CadastroTransac
       
       // Executa o callback de sucesso para atualizar a interface geral
       onSuccess(); 
-    } catch (error: any) {
-      // Captura e exibe a mensagem de validação retornada pela camada de serviço do servidor
-      const mensagemErro = error.response?.data || 'Erro interno ao processar transação.';
-      toast.error(`Bloqueado: ${mensagemErro}`);
+    } catch (error) {
+      // Captura e exibe a mensagem de validação/regra de negócio retornada pelo servidor
+      toast.error(`Bloqueado: ${mensagemDeErro(error, 'Erro interno ao processar transação.')}`);
     }
   };
 
@@ -85,6 +85,7 @@ export function CadastroTransacaoForm({ onSuccess, refreshKey }: CadastroTransac
             value={descricao} 
             onChange={(e) => setDescricao(e.target.value)} 
             placeholder="Ex: Conta de Luz"
+            maxLength={200}
             style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #e0e0e0', boxSizing: 'border-box' }}
           />
         </div>

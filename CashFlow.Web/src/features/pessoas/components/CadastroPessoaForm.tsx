@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { api } from '../../../infra/api';
 import { toast } from 'react-toastify';
+import { mensagemDeErro } from '../../../infra/erros';
 
 export function CadastroPessoaForm({ onSuccess }: { onSuccess: () => void }) {
   const [nome, setNome] = useState('');
@@ -31,8 +32,8 @@ export function CadastroPessoaForm({ onSuccess }: { onSuccess: () => void }) {
       onSuccess();
       
     } catch (error) {
-      console.error(error);
-      toast.error('Erro de conexão. Verifique o status do servidor back-end.');
+      // Mostra a mensagem de validação devolvida pela API (ex.: nome com caracteres inválidos)
+      toast.error(mensagemDeErro(error, 'Não foi possível cadastrar a pessoa.'));
     }
   };
 
@@ -48,6 +49,7 @@ export function CadastroPessoaForm({ onSuccess }: { onSuccess: () => void }) {
             value={nome} 
             onChange={(e) => setNome(e.target.value)} 
             placeholder="Ex: João Victor"
+            maxLength={100}
             style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #e0e0e0', boxSizing: 'border-box' }}
           />
         </div>

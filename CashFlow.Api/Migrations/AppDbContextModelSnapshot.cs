@@ -61,6 +61,28 @@ namespace CashFlow.Api.Migrations
                     b.ToTable("Transacoes");
                 });
 
+            modelBuilder.Entity("CashFlow.Api.Entities.Usuario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SenhaHash")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Usuarios");
+                });
+
             modelBuilder.Entity("CashFlow.Api.Entities.Transacao", b =>
                 {
                     b.HasOne("CashFlow.Api.Entities.Pessoa", "Pessoa")

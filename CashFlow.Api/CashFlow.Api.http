@@ -1,6 +1,29 @@
 @CashFlow.Api_HostAddress = http://localhost:5041
 
-GET {{CashFlow.Api_HostAddress}}/weatherforecast/
+### Cadastro de usuário
+POST {{CashFlow.Api_HostAddress}}/api/auth/registrar
+Content-Type: application/json
+
+{
+  "email": "teste@exemplo.com",
+  "senha": "senha-forte-123"
+}
+
+### Login (copie o "token" da resposta para a variável abaixo)
+POST {{CashFlow.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "teste@exemplo.com",
+  "senha": "senha-forte-123"
+}
+
+###
+@token = cole-o-token-aqui
+
+### Rota protegida (sem o header Authorization devolve 401)
+GET {{CashFlow.Api_HostAddress}}/api/pessoas/totais
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
