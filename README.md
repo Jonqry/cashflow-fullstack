@@ -55,6 +55,8 @@ Testes, na raiz do projeto:
 dotnet test
 ```
 
+Os mesmos testes rodam no GitHub Actions a cada push (`.github/workflows/ci.yml`).
+
 ### Chave do JWT
 
 A chave não fica no repositório. Em desenvolvimento, se nenhuma chave for configurada, a API gera uma nova a cada execução (é só entrar de novo depois de reiniciar). Para fixar uma chave na sua máquina:
