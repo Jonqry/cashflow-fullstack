@@ -3,6 +3,8 @@ import { api } from '../../../infra/api';
 import type { PessoaTotal } from '../types';
 import { toast } from 'react-toastify';
 
+const reais = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
 interface ConsultaTotaisProps {
   refreshKey: number;
   onActionSuccess: () => void; // Callback para propagar atualizações de estado
@@ -67,13 +69,13 @@ export function ConsultaTotais({ refreshKey, onActionSuccess }: ConsultaTotaisPr
               <tr key={pessoa.id} style={{ transition: 'background-color 0.2s' }}>
                 <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>{pessoa.nome}</td>
                 <td style={{ padding: '12px', borderBottom: '1px solid #eee', color: '#28a745', fontWeight: '500' }}>
-                  R$ {pessoa.totalReceitas.toFixed(2)}
+                  {reais.format(pessoa.totalReceitas)}
                 </td>
                 <td style={{ padding: '12px', borderBottom: '1px solid #eee', color: '#dc3545', fontWeight: '500' }}>
-                  R$ {pessoa.totalDespesas.toFixed(2)}
+                  {reais.format(pessoa.totalDespesas)}
                 </td>
                 <td style={{ padding: '12px', borderBottom: '1px solid #eee', fontWeight: 'bold', color: pessoa.saldo >= 0 ? '#28a745' : '#dc3545' }}>
-                  R$ {pessoa.saldo.toFixed(2)}
+                  {reais.format(pessoa.saldo)}
                 </td>
                 <td style={{ padding: '12px', borderBottom: '1px solid #eee', textAlign: 'center' }}>
                   <button 
@@ -89,10 +91,10 @@ export function ConsultaTotais({ refreshKey, onActionSuccess }: ConsultaTotaisPr
           <tfoot>
             <tr style={{ backgroundColor: '#f8f9fa' }}>
               <td style={{ padding: '15px 12px', fontWeight: 'bold', color: '#333' }}>TOTAIS GERAIS</td>
-              <td style={{ padding: '15px 12px', color: '#28a745', fontWeight: 'bold' }}>R$ {dados.totalGeralReceitas.toFixed(2)}</td>
-              <td style={{ padding: '15px 12px', color: '#dc3545', fontWeight: 'bold' }}>R$ {dados.totalGeralDespesas.toFixed(2)}</td>
+              <td style={{ padding: '15px 12px', color: '#28a745', fontWeight: 'bold' }}>{reais.format(dados.totalGeralReceitas)}</td>
+              <td style={{ padding: '15px 12px', color: '#dc3545', fontWeight: 'bold' }}>{reais.format(dados.totalGeralDespesas)}</td>
               <td style={{ padding: '15px 12px', fontWeight: 'bold', fontSize: '16px', color: dados.saldoLiquidoGeral >= 0 ? '#28a745' : '#dc3545' }}>
-                R$ {dados.saldoLiquidoGeral.toFixed(2)}
+                {reais.format(dados.saldoLiquidoGeral)}
               </td>
               <td></td>
             </tr>
